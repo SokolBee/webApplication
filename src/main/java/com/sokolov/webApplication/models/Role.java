@@ -4,12 +4,13 @@ import org.hibernate.annotations.Immutable;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Immutable
 @Table(name = "ROLES")
-public class Role {
+public class Role implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
