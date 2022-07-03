@@ -5,6 +5,7 @@ import com.sokolov.webApplication.models.User;
 import com.sokolov.webApplication.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -54,13 +55,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void addNewUser(final User user) {
         userRepository.insert(bindingNewRoles(user));
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void addNewUser(Collection<User> users) {
         users = users.stream()
                 .map(this::bindingNewRoles)
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void updateUser(User user) {
         userRepository.update(bindingNewRoles(user));
     }
@@ -90,7 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void updateUser(Collection<User> users) {
         users = users.stream()
                 .map(this::bindingNewRoles)
