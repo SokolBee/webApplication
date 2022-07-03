@@ -1,7 +1,9 @@
 package com.sokolov.webApplication.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -18,6 +20,13 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 class PersistenceContext {
+    final Environment env;
+
+    @Autowired
+    public PersistenceContext(Environment env) {
+        this.env = env;
+    }
+
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em
@@ -29,16 +38,18 @@ class PersistenceContext {
         em.setJpaProperties(additionalProperties());
         return em;
     }
+
     @Bean
 
-    public DataSource dataSource(){
+    public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/usersDatabase");
-        dataSource.setUsername( "postgres" );
-        dataSource.setPassword( "Diamondpro750" );
+        dataSource.setDriverClassName(env.getProperty("database.className"));
+        dataSource.setUrl(env.getProperty("database.url"));
+        dataSource.setUsername(env.getProperty("database.userName"));
+        dataSource.setPassword(env.getProperty("database.password"));
         return dataSource;
     }
+
     @Bean
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
@@ -48,7 +59,7 @@ class PersistenceContext {
     }
 
     @Bean
-    public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 
@@ -60,7 +71,6 @@ class PersistenceContext {
         properties.setProperty("show_sql", "true");
         return properties;
     }
-
 
 
 }
