@@ -13,6 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -53,7 +56,7 @@ class UserServiceImplTest {
 
     @Test
     public void testAddNewUserMethod() {
-        user = User.builder()
+        User user = User.builder()
                 .setLogin("Excalibur")
                 .setName("Petia")
                 .setPassword("SuperPas1234")
@@ -63,7 +66,41 @@ class UserServiceImplTest {
 
         userService.addNewUser(user);
 
-        assertEquals(user,userService.getUserByLoginWithRoles(user.getLogin()));
+        assertEquals(user, userService.getUserByLoginWithRoles(user.getLogin()));
+    }
+
+    @Test
+    public void testGetAllUserMethod() {
+        User user = User.builder()
+                .setLogin("Excalibur")
+                .setName("Petia")
+                .setPassword("SuperPas1234")
+                .build();
+        userService.addNewUser(user);
+
+        assertEquals(2, userService.getAllUsers().size());
+    }
+
+    @Test
+    public void testGetUserByLoginWithRoles() {
+        User user = User.builder()
+                .setLogin("Excalibur")
+                .setName("Petia")
+                .setPassword("SuperPas1234")
+                .setRoleSet(new HashSet<>() {{
+                    add(new Role("God"));
+                    add(new Role("Bad"));
+                    add(new Role("Mad"));
+                }})
+                .build();
+        userService.addNewUser(user);
+
+        assertEquals(user, userService.getUserByLoginWithRoles(user.getLogin()));
+        assertEquals(user.getRoleSet(),
+                userService.getUserByLoginWithRoles(user.getLogin()).getRoleSet());
+        userService.getUserByLoginWithRoles(user.getLogin())
+                .getRoleSet()
+                .forEach(role -> assertNotNull(role.getId()));
     }
 
 }
