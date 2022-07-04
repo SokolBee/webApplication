@@ -19,6 +19,8 @@ public interface RoleService {
     void addNewRole(Collection<Role> roles);
     void deleteRole(long id);
     void deleteRole(String name);
+    void deleteRole(Collection<Role> roles);
+    void deleteAllRoles();
 
 
 

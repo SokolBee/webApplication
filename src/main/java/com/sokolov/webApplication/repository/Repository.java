@@ -16,7 +16,8 @@ public interface Repository<T, K> {
 
     void delete(Class<T> tClass,K key);
 
-
+    void delete(Collection<T>collection);
+    void deleteAll(Class<T> t);
 
     //fetching users without roles
     List<T> selectAll(Class<T> tClass);

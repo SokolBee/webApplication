@@ -9,6 +9,8 @@ public interface UserService {
     List<User> getAllUsers();
     User getUserByLoginWithRoles(String login);
     void deleteUser(String login);
+    void deleteUser(Collection<User> users);
+    void deleteAllUsers();
     void addNewUser(User user);
     void addNewUser(Collection<User> users);
     void updateUser(User user);

@@ -55,6 +55,20 @@ public class RepositoryImpl<T, K> implements
     }
 
     @Override
+    public void delete(Collection<T> collection) {
+        collection.forEach(em::remove);
+    }
+
+    @Override
+    public void deleteAll(Class<T>tClass) {
+        CriteriaQuery<T> criteria = em.getCriteriaBuilder()
+                .createQuery(tClass);
+        em.createQuery(criteria.select(criteria.from(tClass)))
+                .getResultList()
+                .forEach(em::remove);
+    }
+
+    @Override
     public List<T> selectAll(Class<T> tClass) {
         CriteriaQuery<T> criteria = em.getCriteriaBuilder()
                 .createQuery(tClass);
@@ -66,6 +80,6 @@ public class RepositoryImpl<T, K> implements
     public List<T> selectByQuery(TypedQuery<T> query) {
         List<T> result = query.getResultList();
         if (result.isEmpty()) throw new NotFoundEntityException();
-        return result;
+        else return result;
     }
 }

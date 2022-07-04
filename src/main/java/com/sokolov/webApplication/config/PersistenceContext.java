@@ -20,7 +20,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-class PersistenceContext {
+public class PersistenceContext {
     final Environment env;
 
     @Autowired
@@ -77,6 +77,7 @@ class PersistenceContext {
         properties.setProperty("hibernate.hbm2ddl.auto", "create");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.setProperty("show_sql", "true");
+
         return properties;
     }
 

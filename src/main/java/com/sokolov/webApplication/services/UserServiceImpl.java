@@ -4,6 +4,7 @@ import com.sokolov.webApplication.models.Role;
 import com.sokolov.webApplication.models.User;
 import com.sokolov.webApplication.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +53,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String login) {
         userRepository.delete(User.class, login);
+    }
+
+    @Override
+    public void deleteUser(Collection<User> users) {
+        userRepository.delete(users);
+    }
+
+    @Override
+    public void deleteAllUsers() {
+        userRepository.deleteAll(User.class);
     }
 
     @Override
