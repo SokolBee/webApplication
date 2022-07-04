@@ -24,18 +24,13 @@ public class UserValidator {
         return this;
     }
 
-
-
     public boolean isValid() {
-        if (!(pattern.matcher(user.getPassword()).find())) {
+        if (!(pattern.matcher(user.getPassword()).find()))
             message.add("Password must contain at least one number and an uppercase letter");
-        }
-        if (user.getName() == null || user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isEmpty())
             message.add("Name can not be empty or null");
-        }
-        if (user.getLogin() == null || user.getLogin().isEmpty()){
+        if (user.getLogin() == null || user.getLogin().isEmpty())
             message.add("Login can not be empty or null");
-        }
         return message.isEmpty();
     }
 

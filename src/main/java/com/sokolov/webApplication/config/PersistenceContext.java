@@ -13,6 +13,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.PersistenceUnitUtil;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -62,6 +63,13 @@ class PersistenceContext {
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
+    @Bean
+    public PersistenceUnitUtil persistenceUnitUtil(){
+        return entityManagerFactory()
+                .getNativeEntityManagerFactory()
+                .getPersistenceUnitUtil();
+    }
+
 
 
     Properties additionalProperties() {

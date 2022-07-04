@@ -1,13 +1,21 @@
 package com.sokolov.webApplication.utils;
 
 import com.sokolov.webApplication.models.User;
-import org.hibernate.LazyInitializationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PersistenceUnitUtil;
 import java.util.HashSet;
 
 @Component
-public class UserConverterImpl implements Converter<User,com.sokolov.webApplication.soap.generated.classes.User>  {
+public class UserConverterImpl implements Converter<User, com.sokolov.webApplication.soap.generated.classes.User> {
+
+    protected final PersistenceUnitUtil util;
+
+    @Autowired
+    public UserConverterImpl(PersistenceUnitUtil util) {
+        this.util = util;
+    }
 
     public com.sokolov.webApplication.soap.generated.classes.User convertToSoap(User user) {
         com.sokolov.webApplication.soap.generated.classes.User soapUser =
@@ -16,20 +24,19 @@ public class UserConverterImpl implements Converter<User,com.sokolov.webApplicat
         soapUser.setName(user.getName());
         soapUser.setPassword(user.getPassword());
 
-        try {
+        if (util.isLoaded(user, "roleSet"))
             soapUser.getRoles().addAll(RoleConverter.convertRolesToSoap(user.getRoleSet()));
-        }catch (LazyInitializationException e){
-            return soapUser;
-        }
+
         return soapUser;
     }
 
     public User convertFromSoap(com.sokolov.webApplication.soap.generated.classes.User soapUser) {
-        User user = new User();
-        user.setLogin(soapUser.getLogin());
-        user.setName(soapUser.getName());
-        user.setPassword(soapUser.getPassword());
-        if(soapUser.getRoles() != null && soapUser.getRoles().size() > 0) {
+        User user = User.builder()
+                .setLogin(soapUser.getLogin())
+                .setName(soapUser.getName())
+                .setPassword(soapUser.getPassword())
+                .build();
+        if (soapUser.getRoles() != null && soapUser.getRoles().size() > 0) {
             user.setRoleSet(new HashSet<>(RoleConverter.convertRolesFromSoap(soapUser.getRoles())));
         }
         return user;

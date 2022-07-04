@@ -1,17 +1,17 @@
 package com.sokolov.webApplication.models;
 
+import com.sokolov.webApplication.utils.EmbeddedUserBuilder;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Entity
 @Table(name = "USERS")
-public class User implements Serializable {
+public class User implements Serializable, EmbeddedUserBuilder<User,Role>  {
     @Id
     @Column(name = "USER_LOGIN")
     protected String login;
@@ -53,24 +53,54 @@ public class User implements Serializable {
         return password;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
     public Set<Role> getRoleSet() {
         return roleSet;
     }
 
-    public void setName(String name) {
+
+    @Override
+    public EmbeddedUserBuilder<User, Role> setLogin(String login) {
+        this.login = login;
+        return this;
+    }
+
+    @Override
+    public EmbeddedUserBuilder<User, Role> setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public void setPassword(String password) {
+    @Override
+    public EmbeddedUserBuilder<User, Role> setPassword(String password) {
         this.password = password;
+        return this;
     }
 
-    public void setRoleSet(Set<Role> roleSet) {
-        this.roleSet = roleSet;
+    @Override
+    public EmbeddedUserBuilder<User, Role> setRoleSet(Collection<Role> collection) {
+        if(roleSet == null) this.roleSet = new HashSet<>(collection);
+        else roleSet.addAll(collection);
+        return this;
+    }
+
+    @Override
+    public EmbeddedUserBuilder<User, Role> setRoleSet(Role role) {
+        if(roleSet == null) this.roleSet = new HashSet<>(){{add(role);}};
+        else roleSet.add(role);
+        return this;
+    }
+
+    @Override
+    public User build() {
+        return this;
+    }
+
+    public static EmbeddedUserBuilder<User,Role> builder()  {
+        try {
+            return User.class.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

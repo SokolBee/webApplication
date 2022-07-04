@@ -1,5 +1,6 @@
 package com.sokolov.webApplication.repository;
 
+import com.sokolov.webApplication.exeption.NotFoundEntityException;
 import com.sun.istack.NotNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +21,10 @@ public class RepositoryImpl<T, K> implements
     }
 
     @Override
-    public T selectById(Class<T> tClass,K key) {
-        return em.find(tClass, key);
+    public T selectById(Class<T> tClass, K key) {
+        T t = em.find(tClass, key);
+        if (t == null) throw new NotFoundEntityException();
+        return t;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class RepositoryImpl<T, K> implements
     @Override
     public void delete(Class<T> tClass, K key) {
         T t = em.find(tClass, key);
+        if (t == null) throw new NotFoundEntityException();
         em.remove(t);
     }
 
@@ -60,6 +64,8 @@ public class RepositoryImpl<T, K> implements
 
     @Override
     public List<T> selectByQuery(TypedQuery<T> query) {
-        return query.getResultList();
+        List<T> result = query.getResultList();
+        if (result.isEmpty()) throw new NotFoundEntityException();
+        return result;
     }
 }
